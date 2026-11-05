@@ -1,0 +1,58 @@
+import os
+import secrets
+from flask import Flask, jsonify, redirect, render_template, request, session, url_for
+from flask_login import current_user, login_required
+
+from backend import init_extensions
+from backend.auth import auth_bp
+from backend.chat import chat_bp
+from config import Config
+
+
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
+
+    if not app.config.get("SECRET_KEY"):
+        app.config["SECRET_KEY"] = secrets.token_hex(32)
+
+    init_extensions(app)
+
+    @app.before_request
+    def ensure_csrf_token():
+        if not session.get("csrf_token"):
+            session["csrf_token"] = secrets.token_urlsafe(32)
+
+    @app.route("/")
+    def index():
+        if current_user.is_authenticated:
+            return render_template("index.html", csrf_token=session.get("csrf_token", ""))
+        return redirect(url_for("auth.login"))
+
+    @app.route("/health")
+    def health_check():
+        return jsonify({"status": "ok", "service": "BrainBuxx"})
+
+    @app.after_request
+    def after_request(response):
+        if request.path.startswith("/api/") and request.method in {"POST", "PATCH", "DELETE"}:
+            csrf_token = request.headers.get("X-CSRFToken")
+            if csrf_token != session.get("csrf_token"):
+                response = jsonify({"error": "CSRF validation failed."})
+                response.status_code = 403
+        return response
+
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(chat_bp)
+
+    @app.login_manager.unauthorized_handler
+    def unauthorized():
+        return redirect(url_for("auth.login"))
+
+    return app
+
+
+app = create_app()
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", "5000")), debug=True)

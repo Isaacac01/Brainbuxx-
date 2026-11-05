@@ -1,0 +1,37 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const launchScreen = document.getElementById('launchScreen');
+    if (!launchScreen) return;
+
+    const brand = document.getElementById('launchBrand');
+    const name = document.getElementById('launchName');
+    const subtitle = document.getElementById('launchSubtitle');
+    const tagline = document.getElementById('launchTagline');
+
+    if (name) {
+        const text = 'BrainBuxx';
+        name.innerHTML = '';
+        [...text].forEach((char, index) => {
+            const span = document.createElement('span');
+            span.className = 'letter';
+            span.style.animationDelay = `${0.3 + index * 0.14}s`;
+            span.textContent = char;
+            name.appendChild(span);
+        });
+    }
+
+    setTimeout(() => {
+        launchScreen.classList.add('hidden');
+    }, 4200);
+
+    if (brand) {
+        brand.classList.add('visible');
+    }
+
+    if (subtitle) {
+        subtitle.textContent = 'An intelligent companion for ideas, knowledge and innovation.';
+    }
+
+    if (tagline) {
+        tagline.textContent = 'Developed by VHS Science and Innovation';
+    }
+});
