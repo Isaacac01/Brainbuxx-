@@ -1,0 +1,35 @@
+version: "3.1"
+
+nlu:
+  - intent: greeting
+    examples: |
+      - hi
+      - hello
+      - hey there
+      - good morning
+      - good evening
+
+  - intent: general_knowledge
+    examples: |
+      - what is artificial intelligence
+      - who is Nikola Tesla
+      - why does the moon change shape
+
+  - intent: coding
+    examples: |
+      - write python code
+      - debug this function
+      - help me with JavaScript
+      - explain APIs
+
+  - intent: math
+    examples: |
+      - solve this equation
+      - calculate the area of a circle
+      - what is 12 * 9
+
+  - intent: education
+    examples: |
+      - teach me biology
+      - explain photosynthesis
+      - help me study chemistry

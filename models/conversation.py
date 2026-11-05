@@ -16,6 +16,7 @@ class User(UserMixin, db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
     conversations = db.relationship("Conversation", back_populates="user", cascade="all, delete-orphan")
+    preferences = db.relationship("UserPreference", back_populates="user", cascade="all, delete-orphan", uselist=False)
 
     def __repr__(self):
         return f"<User {self.username}>"

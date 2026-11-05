@@ -22,3 +22,4 @@ def ensure_conversation_access(conversation_id: int, user_id: int) -> Optional[C
 def touch_conversation(conversation: Conversation):
     conversation.updated_at = datetime.utcnow()
     db.session.add(conversation)
+    db.session.commit()

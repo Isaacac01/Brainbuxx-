@@ -13,9 +13,11 @@ class AIEngine:
         )
         self.context_manager = context_manager or ContextManager(max_turns=8)
 
-    def process_message(self, user_message: str, conversation=None):
+    def process_message(self, user_message: str, conversation=None, history=None):
         intent = self.rasa_client.classify_intent(user_message)
-        context = self.context_manager.build_context(conversation.messages if conversation else [])
+        if history is None and conversation is not None:
+            history = conversation.messages
+        context = self.context_manager.build_context(history or [])
 
         system_prompt = (
             "You are BrainBuxx, an intelligent assistant developed by VHS Science and Innovation. "
@@ -23,7 +25,13 @@ class AIEngine:
             "Maintain context and provide insightful responses."
         )
 
-        prompt = f"{system_prompt}\n\nUser intent: {intent.get('intent')}\n\nConversation context: {context}\n\nUser message: {user_message}\n\nProvide a concise, helpful response with markdown formatting when useful."
+        prompt = (
+            f"{system_prompt}\n\n"
+            f"User intent: {intent.get('intent')}\n\n"
+            f"Conversation context: {context}\n\n"
+            f"User message: {user_message}\n\n"
+            "Provide a concise, helpful response with markdown formatting when useful."
+        )
 
         response = self.gemini_client.generate_response(prompt, context)
         return response, intent

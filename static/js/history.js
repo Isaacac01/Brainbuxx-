@@ -1,18 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const sidebar = document.querySelector('.sidebar');
-    const menuToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
 
-    if (menuToggle && sidebar) {
-        menuToggle.addEventListener('click', () => {
+    if (sidebarToggle && sidebar) {
+        sidebarToggle.addEventListener('click', () => {
             sidebar.classList.toggle('open');
+            sidebar.classList.toggle('collapsed');
         });
-    }
-
-    const loginForm = document.querySelector('.auth-form');
-    if (loginForm) {
-        const message = document.querySelector('.flash-message.error');
-        if (message) {
-            message.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
     }
 });

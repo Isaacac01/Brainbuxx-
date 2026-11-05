@@ -1,33 +1,42 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const searchInput = document.querySelector('.search-input');
-    const list = document.querySelector('.history-list');
-    const newChatButton = document.querySelector('.new-chat-btn');
-    const chatFeed = document.getElementById('chatFeed');
+    const historyList = document.getElementById('historyList');
+    const searchInput = document.getElementById('searchInput');
+    const newChatButton = document.getElementById('newChatButton');
 
-    async function fetchConversations() {
-        const response = await fetch('/api/conversations', { headers: { 'X-CSRFToken': document.body.dataset.csrf || '' } });
+    async function fetchHistory() {
+        if (!historyList) return;
+        const response = await fetch('/api/conversations');
         const data = await response.json();
         renderHistory(data);
     }
 
     function renderHistory(items) {
-        if (!list) return;
-        list.innerHTML = '';
+        if (!historyList) return;
+        historyList.innerHTML = '';
 
         if (!items.length) {
-            list.innerHTML = '<li class="history-item"><span>No conversations yet</span></li>';
+            historyList.innerHTML = '<li class="history-item"><span>No conversations yet</span></li>';
             return;
         }
 
         items.forEach((item) => {
             const li = document.createElement('li');
             li.className = 'history-item';
-            li.innerHTML = `<span data-id="${item.id}">${item.title}</span><button data-delete="${item.id}">✕</button>`;
+            if (window.BrainBuxxState && Number(window.BrainBuxxState.selectedConversation) === item.id) {
+                li.classList.add('active');
+            }
+
+            li.innerHTML = `
+                <span data-id="${item.id}">${item.title}</span>
+                <button type="button" data-delete="${item.id}">✕</button>
+            `;
+
             li.addEventListener('click', (event) => {
-                if (event.target.matches('button')) return;
+                if (event.target.closest('button')) return;
                 loadConversation(item.id);
             });
-            list.appendChild(li);
+
+            historyList.appendChild(li);
         });
     }
 
@@ -36,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = await response.json();
         if (!data.messages) return;
 
+        const chatFeed = document.getElementById('chatFeed');
         if (chatFeed) {
             chatFeed.innerHTML = '';
             data.messages.forEach((msg) => {
@@ -50,20 +60,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         window.BrainBuxxState.selectedConversation = id;
-        const active = document.querySelectorAll('.history-item');
-        active.forEach((i) => i.classList.remove('active'));
-        const item = [...document.querySelectorAll('.history-item span')].find((span) => Number(span.dataset.id) === id)?.closest('.history-item');
-        if (item) item.classList.add('active');
+        renderHistory(await (await fetch('/api/conversations')).json());
     }
 
     if (searchInput) {
-        searchInput.addEventListener('input', async (e) => {
-            const q = e.target.value.trim();
-            if (!q) {
-                fetchConversations();
+        searchInput.addEventListener('input', async (event) => {
+            const query = event.target.value.trim();
+            if (!query) {
+                fetchHistory();
                 return;
             }
-            const response = await fetch(`/api/conversations/search?q=${encodeURIComponent(q)}`);
+            const response = await fetch(`/api/conversations/search?q=${encodeURIComponent(query)}`);
             const data = await response.json();
             renderHistory(data);
         });
@@ -77,8 +84,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             const data = await response.json();
             window.BrainBuxxState.selectedConversation = data.id;
+            const chatFeed = document.getElementById('chatFeed');
             if (chatFeed) chatFeed.innerHTML = '';
-            await fetchConversations();
+            await fetchHistory();
         });
     }
 
@@ -91,13 +99,12 @@ document.addEventListener('DOMContentLoaded', () => {
             headers: { 'X-CSRFToken': document.body.dataset.csrf || '' }
         });
         if (response.ok) {
-            fetchConversations();
             if (window.BrainBuxxState.selectedConversation === id) {
                 window.BrainBuxxState.selectedConversation = null;
-                if (chatFeed) chatFeed.innerHTML = '';
             }
+            fetchHistory();
         }
     });
 
-    fetchConversations();
+    fetchHistory();
 });

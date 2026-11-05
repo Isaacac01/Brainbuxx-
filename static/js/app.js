@@ -22,11 +22,10 @@
 }
 
 .launch-brand {
-    font-size: clamp(2rem, 4vw, 3.8rem);
-    letter-spacing: 0.22rem;
-    font-weight: 700;
-    color: #eef6ff;
-    text-shadow: 0 0 16px rgba(93, 177, 255, 0.55);
+    font-size: clamp(1.2rem, 2vw, 1.6rem);
+    letter-spacing: 0.14rem;
+    font-weight: 600;
+    color: rgba(237, 246, 255, 0.8);
     opacity: 0;
     animation: fadeUp 1s ease forwards 0.35s;
 }

@@ -1,0 +1,17 @@
+version: "3.1"
+
+stories:
+  - story: greeting conversation
+    steps:
+      - intent: greeting
+      - action: utter_greeting
+
+  - story: general talk
+    steps:
+      - intent: general_knowledge
+      - action: utter_unknown
+
+  - story: math query
+    steps:
+      - intent: math
+      - action: utter_unknown

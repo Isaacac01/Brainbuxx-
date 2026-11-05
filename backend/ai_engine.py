@@ -11,17 +11,13 @@ class ResponseFormatter:
 
     @staticmethod
     def markdown_to_html(text: str) -> str:
-        replacements = [
-            (r"### (.*)", r"<h3>\1</h3>"),
-            (r"## (.*)", r"<h2>\1</h2>"),
-            (r"# (.*)", r"<h1>\1</h1>"),
-            (r"\*\*(.*)\*\*", r"<strong>\1</strong>"),
-            (r"\*(.*)\*", r"<em>\1</em>"),
-            (r"`([^`]+)`", r"<code>\1</code>"),
-            (r"\n- (.*)", r"\n<li>\1</li>"),
-        ]
         html = text
-        for pattern, replacement in replacements:
-            html = re.sub(pattern, replacement, html)
+        html = re.sub(r"### (.*)", r"<h3>\1</h3>", html)
+        html = re.sub(r"## (.*)", r"<h2>\1</h2>", html)
+        html = re.sub(r"# (.*)", r"<h1>\1</h1>", html)
+        html = re.sub(r"\*\*(.*)\*\*", r"<strong>\1</strong>", html)
+        html = re.sub(r"\*(.*)\*", r"<em>\1</em>", html)
+        html = re.sub(r"`([^`]+)`", r"<code>\1</code>", html)
+        html = re.sub(r"\n- (.*)", r"\n<li>\1</li>", html)
         html = html.replace("\n", "<br>")
         return html

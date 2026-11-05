@@ -1,5 +1,5 @@
 import re
-from typing import Dict, List
+from typing import Dict
 
 
 class RasaClient:
@@ -33,5 +33,5 @@ class RasaClient:
 
     def generate_response(self, message: str) -> Dict[str, object]:
         if not self.enabled:
-            return {"intent": "fallback", "response": "Rasa not active in this session."}
-        return {"intent": "fallback", "response": f"Handled by Rasa with message: {message}"}
+            return {"intent": "fallback", "response": "Rasa is offline in this session."}
+        return {"intent": "fallback", "response": f"Rasa handled: {message}"}

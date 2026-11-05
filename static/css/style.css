@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrainBuxx</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
+</head>
+<body>
+    <div id="launchScreen" class="launch-screen">
+        <div class="launch-content">
+            <div id="launchBrand" class="launch-brand">VHS Science and Innovation</div>
+            <div id="launchName" class="launch-name"></div>
+            <div id="launchSubtitle" class="launch-subtitle"></div>
+            <div id="launchTagline" class="launch-tagline"></div>
+        </div>
+    </div>
+
+    <div class="app-shell">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand">
+                    <div class="brand-icon">B</div>
+                    <span>BrainBuxx</span>
+                </div>
+                <button id="sidebarToggle" class="icon-btn" aria-label="Toggle sidebar">☰</button>
+            </div>
+
+            <div class="sidebar-actions">
+                <button class="new-chat-btn" id="newChatButton">＋ New Chat</button>
+                <div class="search-box">
+                    <span class="search-icon">⌕</span>
+                    <input id="searchInput" class="search-input" type="text" placeholder="Search history">
+                </div>
+            </div>
+
+            <ul class="history-list" id="historyList"></ul>
+
+            <div class="user-profile">
+                <div class="profile-pill">
+                    <div class="avatar">{{ current_user.username[0].upper() }}</div>
+                    <div class="user-meta">
+                        <span class="user-name">{{ current_user.username }}</span>
+                        <span class="user-role">AI collaborator</span>
+                    </div>
+                </div>
+
+                <form method="POST" action="{{ url_for('auth.logout') }}">
+                    <button type="submit" class="ghost-btn">Logout</button>
+                </form>
+            </div>
+        </aside>
+
+        <main class="main-panel">
+            <header class="topbar">
+                <div class="topbar-title">
+                    <div class="topbar-status"></div>
+                    <strong>BrainBuxx</strong>
+                </div>
+                <div class="topbar-tools">
+                    <button class="icon-btn" id="copyButton" title="Copy response">Copy</button>
+                    <button class="icon-btn" id="regenerateButton" title="Regenerate response">Regenerate</button>
+                    <button class="icon-btn" id="clearButton" title="Clear chat">Clear</button>
+                </div>
+            </header>
+
+            <div id="chatFeed" class="chat-feed"></div>
+
+            <div class="composer">
+                <form id="chatForm" class="composer-bar">
+                    <button type="button" class="icon-btn" aria-label="Voice input">🎙</button>
+                    <textarea id="userInput" class="message-input" rows="1" placeholder="Ask BrainBuxx anything..."></textarea>
+                    <button type="submit" id="sendButton" class="send-btn">Send</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/history.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
+    <script>
+        document.body.dataset.csrf = "{{ csrf_token }}";
+    </script>
+</body>
+</html>
